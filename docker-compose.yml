@@ -4,8 +4,7 @@ services:
     container_name: homeassistant
     image: "ghcr.io/home-assistant/home-assistant:stable"
     volumes:
-      - home-assistant-data:/config
-      - ssl-cert:/ssl
+      - "${HOMEASSISTANT_DIR}:/config"
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
     privileged: true
@@ -20,7 +19,7 @@ services:
     environment:
       - TZ=America/Sao_Paulo
     volumes:
-      - esphome-data:/config
+      - "${ESPHOME_DIR}:/config"
     ports:
       - 6123:6123
     privileged: true
@@ -51,7 +50,7 @@ services:
       - TOKEN=$DUCKDNS_TOKEN
       - LOG_FILE=false #optional
     volumes:
-      - duckdns-data:/config #optional
+      - "${DUCKDNS_DIR}:/config"
     restart: unless-stopped
     networks:
       - mynet
@@ -66,8 +65,8 @@ services:
       - 6052:6052
       - 1880:1880
     volumes:
-      - /path/to/nginx.conf:/etc/nginx/nginx.conf
-      - ssl-cert:/ssl/
+      - "${NGINX_DIR}:/etc/nginx/nginx.conf"
+      - "${SSL_DIR}:/ssl/"
     networks:
       - mynet
 
@@ -75,33 +74,9 @@ networks:
   mynet:
 
 volumes:
-  home-assistant-data:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: $HOMEASSISTANT_DIR
-  esphome-data:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: $ESPHOME_DIR
   node-red-data:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
       device: $NODERED_DIR
-  duckdns-data:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: $DUCKDNS_DIR
-  ssl-cert:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: $SSL_DIR
